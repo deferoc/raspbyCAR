@@ -22,17 +22,31 @@ STEERING_SETTLE_TIME = 0.05  # secondi di attesa prima di rilasciare il servo (d
 
 # --- Controller Bluetooth (gamepad) ---
 # Nome (o parte del nome) del device come appare in /dev/input/ tramite evdev.
-BT_CONTROLLER_NAME_HINT = "PLAYSTATION"
+BT_CONTROLLER_NAME_HINT = "Wireless Controller"
 
 # Secondi tra un tentativo di connessione al joypad e il successivo.
 BT_RECONNECT_INTERVAL = 2.0
 
-# Codici evento evdev (EV_ABS) del gamepad usato in precedenza.
-BT_STEER_AXIS = 0        # asse X stick sinistro -> sterzo
-BT_SPEED_AXIS = 4        # asse -> velocità motore (0 = veloce, 255 = lento)
-BT_BACKWARD_TRIGGER = 2  # L2 -> retromarcia
-BT_FORWARD_TRIGGER = 5   # R2 -> marcia avanti
+# ASSI / TRIGGER DEL DUALSHOCK 4
+# ============================================================
+
+# Stick sinistro X -> sterzo
+# ABS_X = codice 0
+BT_STEER_AXIS = 0
+
+# L2 -> retromarcia
+# ABS_Z = codice 2
+BT_BACKWARD_TRIGGER = 2
+
+# R2 -> marcia avanti
+# ABS_RZ = codice 5
+BT_FORWARD_TRIGGER = 5
+
+# Valore minimo del trigger considerato "premuto".
+# 0 = non premuto
+# 255 = completamente premuto
 BT_TRIGGER_THRESHOLD = 10
+
 
 # Soglie per discretizzare l'asse di sterzo in sinistra/centro/destra.
 BT_STEER_RIGHT_THRESHOLD = 10

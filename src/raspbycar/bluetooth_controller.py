@@ -1,9 +1,11 @@
 """Lettura input da gamepad collegato via Bluetooth (protocollo HID / evdev).
 
-Mapping fedele all'hardware usato in precedenza:
-asse 0 = sterzo,
-asse 4 = velocità,
-trigger L2/R2 = retromarcia/marcia avanti.
+Mapping DualShock 4:
+asse 0 = sterzo (stick sinistro X),
+asse 2 = L2 = retromarcia,
+asse 5 = R2 = marcia avanti.
+
+La pressione di L2/R2 determina anche la velocità del motore.
 """
 
 from __future__ import annotations
@@ -22,7 +24,7 @@ class ControllerState:
 
     steer: float = config.STEERING_CENTER_ANGLE
     direction: str = "stop"
-    speed: float = config.DC_MOTOR_DEFAULT_SPEED
+    speed: float = 0.0
 
 
 class BluetoothController:
@@ -31,16 +33,18 @@ class BluetoothController:
     def __init__(self, name_hint: str = config.BT_CONTROLLER_NAME_HINT) -> None:
         self._name_hint = name_hint
         self._device: evdev.InputDevice | None = None
+
         self.state = ControllerState()
-        self._backward_pressed = False
-        self._forward_pressed = False
+
+        self._backward_value = 0
+        self._forward_value = 0
 
     @property
     def is_connected(self) -> bool:
         return self._device is not None
 
     def connect(self) -> bool:
-        """Cerca il gamepad tra i device disponibili; ritorna True se trovato."""
+        """Cerca il gamepad tra i device disponibili."""
 
         for path in evdev.list_devices():
             device = evdev.InputDevice(path)
@@ -57,96 +61,136 @@ class BluetoothController:
 
             self._device = device
 
-            print(
-                f"Joypad trovato: {device.name} ({device.path})"
-            )
+            # Stato iniziale sicuro.
+            self.state.direction = "stop"
+            self.state.speed = 0.0
+
+            print(f"Joypad trovato: {device.name} ({device.path})")
 
             return True
 
         return False
 
     def disconnect(self) -> None:
-        """Dimentica il device corrente dopo una disconnessione rilevata."""
+        """Disconnette il controller e porta il sistema in stato sicuro."""
 
         if self._device is not None:
             self._device.close()
 
         self._device = None
-        self._backward_pressed = False
-        self._forward_pressed = False
+
+        self._backward_value = 0
+        self._forward_value = 0
+
+        # STOP DI SICUREZZA
         self.state.direction = "stop"
+        self.state.speed = 0.0
 
     def _update_direction(self) -> None:
-        if self._backward_pressed and not self._forward_pressed:
-            self.state.direction = "backward"
+        """Aggiorna direzione e velocità in base a L2/R2."""
 
-        elif self._forward_pressed and not self._backward_pressed:
-            self.state.direction = "forward"
+        backward = self._backward_value
+        forward = self._forward_value
 
-        else:
-            # Nessun trigger premuto, oppure entrambi premuti:
-            # stato sicuro.
+        threshold = config.BT_TRIGGER_THRESHOLD
+
+        # --------------------------------------------------
+        # Entrambi premuti oppure nessuno premuto -> STOP
+        # --------------------------------------------------
+        if (
+            (backward > threshold and forward > threshold)
+            or
+            (backward <= threshold and forward <= threshold)
+        ):
             self.state.direction = "stop"
+            self.state.speed = 0.0
+            return
+
+        # --------------------------------------------------
+        # L2 -> RETROMARCIA
+        # --------------------------------------------------
+        if backward > threshold:
+            self.state.direction = "backward"
+            self.state.speed = self._map_trigger_speed(backward)
+            return
+
+        # --------------------------------------------------
+        # R2 -> AVANTI
+        # --------------------------------------------------
+        if forward > threshold:
+            self.state.direction = "forward"
+            self.state.speed = self._map_trigger_speed(forward)
+            return
+
+        # Sicurezza
+        self.state.direction = "stop"
+        self.state.speed = 0.0
 
     @staticmethod
     def _discrete_steer_angle(value: int) -> float:
-        """Discretizza il valore grezzo dell'asse in sinistra/centro/destra."""
+        """Discretizza lo stick sinistro in sinistra/centro/destra."""
 
-        if value <= config.BT_STEER_RIGHT_THRESHOLD:
-            return config.STEERING_RIGHT_ANGLE
-
-        if value >= config.BT_STEER_LEFT_THRESHOLD:
+        if value <= config.BT_STEER_LEFT_THRESHOLD:
             return config.STEERING_LEFT_ANGLE
+
+        if value >= config.BT_STEER_RIGHT_THRESHOLD:
+            return config.STEERING_RIGHT_ANGLE
 
         return config.STEERING_CENTER_ANGLE
 
     @staticmethod
-    def _map_speed(value: int) -> float:
-        """Asse velocità: 0 = veloce, 255 = lento."""
+    def _map_trigger_speed(value: int) -> float:
+        """Converte la pressione del trigger 0..255 in velocità 0..1."""
 
-        return max(0.0, min(1.0, (255 - value) / 255))
+        return max(0.0, min(1.0, value / 255.0))
 
     def events(self):
-        """Genera lo stato aggiornato del controller ad ogni evento ricevuto."""
+        """Genera lo stato aggiornato del controller ad ogni evento."""
 
         if self._device is None:
             return
 
-        for event in self._device.read_loop():
+        try:
+            for event in self._device.read_loop():
 
-            if event.type != ecodes.EV_ABS:
-                continue
+                if event.type != ecodes.EV_ABS:
+                    continue
 
-            # Stick sinistro X → sterzo
-            if event.code == config.BT_STEER_AXIS:
-                self.state.steer = self._discrete_steer_angle(event.value)
+                # --------------------------------------------------
+                # Stick sinistro X -> sterzo
+                # ABS_X = 0
+                # --------------------------------------------------
+                if event.code == config.BT_STEER_AXIS:
+                    self.state.steer = self._discrete_steer_angle(
+                        event.value
+                    )
 
-            # Asse 4 → velocità
-            elif event.code == config.BT_SPEED_AXIS:
-                self.state.speed = self._map_speed(event.value)
+                # --------------------------------------------------
+                # L2 -> retromarcia + velocità
+                # ABS_Z = 2
+                # --------------------------------------------------
+                elif event.code == config.BT_BACKWARD_TRIGGER:
+                    self._backward_value = event.value
+                    self._update_direction()
 
-            # L2 → retromarcia
-            elif event.code == config.BT_BACKWARD_TRIGGER:
-                self._backward_pressed = (
-                    event.value > config.BT_TRIGGER_THRESHOLD
-                )
-                self._update_direction()
+                # --------------------------------------------------
+                # R2 -> avanti + velocità
+                # ABS_RZ = 5
+                # --------------------------------------------------
+                elif event.code == config.BT_FORWARD_TRIGGER:
+                    self._forward_value = event.value
+                    self._update_direction()
 
-            # R2 → avanti
-            elif event.code == config.BT_FORWARD_TRIGGER:
-                self._forward_pressed = (
-                    event.value > config.BT_TRIGGER_THRESHOLD
-                )
-                self._update_direction()
+                else:
+                    continue
 
-            else:
-                continue
+                yield self.state
 
-            yield self.state
+        except OSError:
+            # Controller scollegato.
+            self.disconnect()
 
     def close(self) -> None:
         """Chiude il dispositivo del gamepad."""
 
-        if self._device is not None:
-            self._device.close()
-            self._device = None
+        self.disconnect()
