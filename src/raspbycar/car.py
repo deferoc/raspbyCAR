@@ -14,6 +14,23 @@ class Car:
         self._motor = DCMotor()
         self._steering = SteeringMotor()
 
+    def _format_debug_report(self, state: ControllerState) -> str:
+        """Crea un log leggibile da CLI con i valori attuali del controller e dell'impianto."""
+        return (
+            "[DEBUG] L2={:3d} R2={:3d} axis_x={:3d} "
+            "dir={:7s} speed={:.2f} motor={:.2f}V "
+            "steer_angle={:.0f}° servo={:.0f}°"
+        ).format(
+            state.backward_trigger,
+            state.forward_trigger,
+            state.steer_axis,
+            state.direction,
+            state.speed,
+            self._motor.command_voltage,
+            state.steer,
+            self._steering.current_angle,
+        )
+
     def _apply_state(self, state: ControllerState) -> None:
         if state.direction == "forward":
             self._motor.forward(state.speed)
@@ -28,6 +45,8 @@ class Car:
             self._steering.right()
         else:
             self._steering.center()
+
+        print(self._format_debug_report(state))
 
     def _wait_ready(self) -> None:
         """Attende che il joypad sia connesso."""

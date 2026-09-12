@@ -26,6 +26,7 @@ class SteeringMotor:
             max_pulse_width=max_pulse_width,
         )
         self._last_angle = None
+        self.current_angle = config.STEERING_CENTER_ANGLE
         self.center()
 
     def set_angle(self, angle: float) -> None:
@@ -36,6 +37,7 @@ class SteeringMotor:
         sleep(config.STEERING_SETTLE_TIME)
         self._servo.detach()
         self._last_angle = angle
+        self.current_angle = angle
 
     def left(self) -> None:
         self.set_angle(config.STEERING_LEFT_ANGLE)

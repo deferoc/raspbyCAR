@@ -22,9 +22,12 @@ from . import config
 class ControllerState:
     """Stato normalizzato del controller in un dato istante."""
 
+    steer_axis: int = 0
     steer: float = config.STEERING_CENTER_ANGLE
     direction: str = "stop"
     speed: float = 0.0
+    backward_trigger: int = 0
+    forward_trigger: int = 0
 
 
 class BluetoothController:
@@ -38,6 +41,20 @@ class BluetoothController:
 
         self._backward_value = 0
         self._forward_value = 0
+
+    def _set_raw_state(self, event_code: int, value: int) -> None:
+        """Aggiorna i valori grezzi del joypad usati per il debug."""
+        if event_code == config.BT_STEER_AXIS:
+            self.state.steer_axis = value
+            self.state.steer = self._discrete_steer_angle(value)
+        elif event_code == config.BT_BACKWARD_TRIGGER:
+            self.state.backward_trigger = value
+            self._backward_value = value
+            self._update_direction()
+        elif event_code == config.BT_FORWARD_TRIGGER:
+            self.state.forward_trigger = value
+            self._forward_value = value
+            self._update_direction()
 
     @property
     def is_connected(self) -> bool:
@@ -161,25 +178,21 @@ class BluetoothController:
                 # ABS_X = 0
                 # --------------------------------------------------
                 if event.code == config.BT_STEER_AXIS:
-                    self.state.steer = self._discrete_steer_angle(
-                        event.value
-                    )
+                    self._set_raw_state(event.code, event.value)
 
                 # --------------------------------------------------
                 # L2 -> retromarcia + velocità
                 # ABS_Z = 2
                 # --------------------------------------------------
                 elif event.code == config.BT_BACKWARD_TRIGGER:
-                    self._backward_value = event.value
-                    self._update_direction()
+                    self._set_raw_state(event.code, event.value)
 
                 # --------------------------------------------------
                 # R2 -> avanti + velocità
                 # ABS_RZ = 5
                 # --------------------------------------------------
                 elif event.code == config.BT_FORWARD_TRIGGER:
-                    self._forward_value = event.value
-                    self._update_direction()
+                    self._set_raw_state(event.code, event.value)
 
                 else:
                     continue
