@@ -42,14 +42,13 @@ BT_BACKWARD_TRIGGER = 2
 # ABS_RZ = codice 5
 BT_FORWARD_TRIGGER = 5
 
-# Zona morta del trigger: valori vicini a 0 sono rumore / offset del joypad.
-# Dopo la zona morta, i valori vengono considerati come pressione reale.
-BT_TRIGGER_DEADBAND = 20
+# Il motore ha un minimo di avviamento reale di circa 1.2V.
+# Quindi sotto questo valore il trigger va considerato "fermo".
+DC_MOTOR_SUPPLY_VOLTAGE = 7.0
+DC_MOTOR_MIN_START_VOLTAGE = 1.2
 
-# Valore minimo del trigger considerato "premuto" dopo la zona morta.
-# 0 = non premuto
-# 255 = completamente premuto
-BT_TRIGGER_THRESHOLD = 10
+# Calcolato da 1.2V / 7.0V * 255 ≈ 43.7 -> soglia minima di avvio.
+BT_TRIGGER_THRESHOLD = 44
 
 
 # Soglie per discretizzare l'asse di sterzo in sinistra/centro/destra.

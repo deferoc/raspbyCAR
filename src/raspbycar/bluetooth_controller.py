@@ -103,18 +103,16 @@ class BluetoothController:
         self.state.direction = "stop"
         self.state.speed = 0.0
 
-    @staticmethod
-    def _apply_deadband(value: int) -> int:
-        """Ignora il rumore del trigger vicino allo zero."""
-        if value <= config.BT_TRIGGER_DEADBAND:
-            return 0
-        return value - config.BT_TRIGGER_DEADBAND
-
     def _update_direction(self) -> None:
-        """Aggiorna direzione e velocità in base a L2/R2."""
+        """Aggiorna direzione e velocità in base a L2/R2.
 
-        backward = self._apply_deadband(self._backward_value)
-        forward = self._apply_deadband(self._forward_value)
+        Il motore non parte sotto i ~1.2V richiesti al suo avviamento, quindi
+        il trigger deve essere considerato spento finché il valore raw non
+        raggiunge la soglia minima di accensione.
+        """
+
+        backward = self._backward_value
+        forward = self._forward_value
 
         threshold = config.BT_TRIGGER_THRESHOLD
 
@@ -164,14 +162,15 @@ class BluetoothController:
 
     @staticmethod
     def _map_trigger_speed(value: int) -> float:
-        """Converte la pressione del trigger 0..255 in velocità 0..1,
-        ignorando la zona morta del segnale."""
+        """Converte il trigger in velocità partendo da 1.2V, che è il vero
+        minimo di avviamento del motore. Sotto la soglia il motore è fermo."""
 
-        if value <= 0:
+        threshold = config.BT_TRIGGER_THRESHOLD
+        if value <= threshold:
             return 0.0
 
-        scale = max(1, 255 - config.BT_TRIGGER_DEADBAND)
-        return max(0.0, min(1.0, value / scale))
+        mapped = (value - threshold) / max(1, 255 - threshold)
+        return max(0.0, min(1.0, mapped))
 
     def events(self):
         """Genera lo stato aggiornato del controller ad ogni evento."""
