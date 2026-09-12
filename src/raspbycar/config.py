@@ -54,9 +54,16 @@ BT_TRIGGER_START_RAW = 1
 BT_TRIGGER_THRESHOLD = 1
 
 
-# Soglie per discretizzare l'asse di sterzo in sinistra/centro/destra.
-BT_STEER_RIGHT_THRESHOLD = 10
-BT_STEER_LEFT_THRESHOLD = 240
+# Mappatura lineare dell'asse X del joypad sul range del servo.
+# 0 -> -10°  ; 255 -> 65°
+# Il centro in questo intervallo è calcolato come:
+# center_raw = (255 - 0) / 2 = 127.5 ≈ 128
+# angolo_centrale = -10 + ((128 - 0) / 255) * (65 - (-10)) ≈ 22°
+BT_STEER_RAW_MIN = 0
+BT_STEER_RAW_MAX = 255
+BT_STEER_ANGLE_MIN = -10
+BT_STEER_ANGLE_MAX = 65
+BT_STEER_CENTER_RAW = 128
 
 # --- Sensore alimentazione L298N ---
 # Pin collegato, tramite un partitore di tensione (es. 10k+10k) o un

@@ -151,15 +151,27 @@ class BluetoothController:
 
     @staticmethod
     def _discrete_steer_angle(value: int) -> float:
-        """Discretizza lo stick sinistro in sinistra/centro/destra."""
+        """Mappa il valore dell'asse X del joypad sull'intervallo di angoli del servo.
 
-        if value <= config.BT_STEER_LEFT_THRESHOLD:
-            return config.STEERING_LEFT_ANGLE
+        Convenzione richiesta:
+        - raw 0 -> -10°
+        - raw 255 -> 65°
+        - raw 128 -> circa 22° (centro geometrico)
+        """
 
-        if value >= config.BT_STEER_RIGHT_THRESHOLD:
-            return config.STEERING_RIGHT_ANGLE
+        raw_min = config.BT_STEER_RAW_MIN
+        raw_max = config.BT_STEER_RAW_MAX
+        angle_min = config.BT_STEER_ANGLE_MIN
+        angle_max = config.BT_STEER_ANGLE_MAX
 
-        return config.STEERING_CENTER_ANGLE
+        if value <= raw_min:
+            return float(angle_min)
+
+        if value >= raw_max:
+            return float(angle_max)
+
+        normalized = (value - raw_min) / (raw_max - raw_min)
+        return angle_min + normalized * (angle_max - angle_min)
 
     @staticmethod
     def _map_trigger_speed(value: int) -> float:
