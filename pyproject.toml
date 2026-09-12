@@ -9,6 +9,7 @@ description = "RC robotic car built with a Raspberry Pi and various modules"
 requires-python = ">=3.9"
 dependencies = [
     "gpiozero>=2.0",
+    "lgpio>=0.2.2.0; platform_system == 'Linux'",
     "evdev>=1.6.1; platform_system == 'Linux'",
 ]
 
