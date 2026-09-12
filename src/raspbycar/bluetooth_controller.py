@@ -55,7 +55,7 @@ class BluetoothController:
                 continue
 
             # Ignora il dispositivo dedicato ai sensori di movimento.
-            if "motion sensors" in name:
+            if "motion sensors" in name or "touchpad" in name:
                 device.close()
                 continue
 
