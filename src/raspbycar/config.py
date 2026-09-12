@@ -43,12 +43,15 @@ BT_BACKWARD_TRIGGER = 2
 BT_FORWARD_TRIGGER = 5
 
 # Il motore ha un minimo di avviamento reale di circa 1.2V.
-# Quindi sotto questo valore il trigger va considerato "fermo".
+# In base alla tua taratura, il valore di trigger che manda 1.2V è 1,
+# per entrambi i trigger L2 e R2.
 DC_MOTOR_SUPPLY_VOLTAGE = 7.0
 DC_MOTOR_MIN_START_VOLTAGE = 1.2
 
-# Calcolato da 1.2V / 7.0V * 255 ≈ 43.7 -> soglia minima di avvio.
-BT_TRIGGER_THRESHOLD = 44
+# Raw del trigger da cui inizia la curva di accelerazione.
+# 1 -> 1.2V ; 255 -> 7.0V
+BT_TRIGGER_START_RAW = 1
+BT_TRIGGER_THRESHOLD = 1
 
 
 # Soglie per discretizzare l'asse di sterzo in sinistra/centro/destra.

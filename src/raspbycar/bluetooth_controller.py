@@ -115,14 +115,15 @@ class BluetoothController:
         forward = self._forward_value
 
         threshold = config.BT_TRIGGER_THRESHOLD
+        start_raw = config.BT_TRIGGER_START_RAW
 
         # --------------------------------------------------
         # Entrambi premuti oppure nessuno premuto -> STOP
         # --------------------------------------------------
         if (
-            (backward > threshold and forward > threshold)
+            (backward >= start_raw and forward >= start_raw)
             or
-            (backward <= threshold and forward <= threshold)
+            (backward < start_raw and forward < start_raw)
         ):
             self.state.direction = "stop"
             self.state.speed = 0.0
@@ -131,7 +132,7 @@ class BluetoothController:
         # --------------------------------------------------
         # L2 -> RETROMARCIA
         # --------------------------------------------------
-        if backward > threshold:
+        if backward >= start_raw:
             self.state.direction = "backward"
             self.state.speed = self._map_trigger_speed(backward)
             return
@@ -139,7 +140,7 @@ class BluetoothController:
         # --------------------------------------------------
         # R2 -> AVANTI
         # --------------------------------------------------
-        if forward > threshold:
+        if forward >= start_raw:
             self.state.direction = "forward"
             self.state.speed = self._map_trigger_speed(forward)
             return
@@ -162,15 +163,27 @@ class BluetoothController:
 
     @staticmethod
     def _map_trigger_speed(value: int) -> float:
-        """Converte il trigger in velocità partendo da 1.2V, che è il vero
-        minimo di avviamento del motore. Sotto la soglia il motore è fermo."""
+        """Mappa il valore raw del trigger in velocità usando la taratura reale
+        del motore: 1 -> 1.2V, 255 -> 7.0V.
 
-        threshold = config.BT_TRIGGER_THRESHOLD
-        if value <= threshold:
+        In questo modo il motore resta fermo sotto il primissimo valore utile
+        e non vibra a riposo.
+        """
+
+        start_raw = config.BT_TRIGGER_START_RAW
+        if value <= 0:
             return 0.0
 
-        mapped = (value - threshold) / max(1, 255 - threshold)
-        return max(0.0, min(1.0, mapped))
+        if value < start_raw:
+            return 0.0
+
+        raw_span = max(1, 255 - start_raw)
+        mapped = (value - start_raw) / raw_span
+        voltage = (
+            config.DC_MOTOR_MIN_START_VOLTAGE
+            + mapped * (config.DC_MOTOR_SUPPLY_VOLTAGE - config.DC_MOTOR_MIN_START_VOLTAGE)
+        )
+        return max(0.0, min(1.0, voltage / config.DC_MOTOR_SUPPLY_VOLTAGE))
 
     def events(self):
         """Genera lo stato aggiornato del controller ad ogni evento."""
