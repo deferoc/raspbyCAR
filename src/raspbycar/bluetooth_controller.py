@@ -37,14 +37,27 @@ class BluetoothController:
     def is_connected(self) -> bool:
         return self._device is not None
 
-    def connect(self) -> bool:
-        """Cerca il gamepad tra i device disponibili; ritorna True se trovato."""
-        for path in evdev.list_devices():
-            device = evdev.InputDevice(path)
-            if self._name_hint.lower() in device.name.lower():
-                self._device = device
-                return True
-        return False
+def connect(self) -> bool:
+    """Cerca il gamepad tra i device disponibili; ritorna True se trovato."""
+    for path in evdev.list_devices():
+        device = evdev.InputDevice(path)
+
+        name = device.name.lower()
+
+        if self._name_hint.lower() not in name:
+            device.close()
+            continue
+
+        # Ignora il dispositivo dei sensori di movimento.
+        if "motion sensors" in name:
+            device.close()
+            continue
+
+        self._device = device
+        print(f"Joypad trovato: {device.name} ({device.path})")
+        return True
+
+    return False
 
     def disconnect(self) -> None:
         """Dimentica il device corrente dopo una disconnessione rilevata."""

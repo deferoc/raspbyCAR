@@ -22,7 +22,7 @@ STEERING_SETTLE_TIME = 0.05  # secondi di attesa prima di rilasciare il servo (d
 
 # --- Controller Bluetooth (gamepad) ---
 # Nome (o parte del nome) del device come appare in /dev/input/ tramite evdev.
-BT_CONTROLLER_NAME_HINT = "Wireless Controller"
+BT_CONTROLLER_NAME_HINT = "PLAYSTATION"
 
 # Secondi tra un tentativo di connessione al joypad e il successivo.
 BT_RECONNECT_INTERVAL = 2.0
