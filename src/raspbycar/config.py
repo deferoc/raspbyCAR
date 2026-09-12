@@ -42,7 +42,11 @@ BT_BACKWARD_TRIGGER = 2
 # ABS_RZ = codice 5
 BT_FORWARD_TRIGGER = 5
 
-# Valore minimo del trigger considerato "premuto".
+# Zona morta del trigger: valori vicini a 0 sono rumore / offset del joypad.
+# Dopo la zona morta, i valori vengono considerati come pressione reale.
+BT_TRIGGER_DEADBAND = 20
+
+# Valore minimo del trigger considerato "premuto" dopo la zona morta.
 # 0 = non premuto
 # 255 = completamente premuto
 BT_TRIGGER_THRESHOLD = 10

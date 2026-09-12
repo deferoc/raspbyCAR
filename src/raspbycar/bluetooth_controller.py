@@ -103,11 +103,18 @@ class BluetoothController:
         self.state.direction = "stop"
         self.state.speed = 0.0
 
+    @staticmethod
+    def _apply_deadband(value: int) -> int:
+        """Ignora il rumore del trigger vicino allo zero."""
+        if value <= config.BT_TRIGGER_DEADBAND:
+            return 0
+        return value - config.BT_TRIGGER_DEADBAND
+
     def _update_direction(self) -> None:
         """Aggiorna direzione e velocità in base a L2/R2."""
 
-        backward = self._backward_value
-        forward = self._forward_value
+        backward = self._apply_deadband(self._backward_value)
+        forward = self._apply_deadband(self._forward_value)
 
         threshold = config.BT_TRIGGER_THRESHOLD
 
@@ -157,9 +164,14 @@ class BluetoothController:
 
     @staticmethod
     def _map_trigger_speed(value: int) -> float:
-        """Converte la pressione del trigger 0..255 in velocità 0..1."""
+        """Converte la pressione del trigger 0..255 in velocità 0..1,
+        ignorando la zona morta del segnale."""
 
-        return max(0.0, min(1.0, value / 255.0))
+        if value <= 0:
+            return 0.0
+
+        scale = max(1, 255 - config.BT_TRIGGER_DEADBAND)
+        return max(0.0, min(1.0, value / scale))
 
     def events(self):
         """Genera lo stato aggiornato del controller ad ogni evento."""
