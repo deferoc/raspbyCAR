@@ -1,0 +1,14 @@
+[Unit]
+Description=raspbyCAR - avvio automatico del software di controllo
+After=bluetooth.target network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/raspbyCAR
+ExecStart=/home/pi/raspbyCAR/.venv/bin/python /home/pi/raspbyCAR/main.py
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

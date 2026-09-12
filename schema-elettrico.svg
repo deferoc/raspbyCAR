@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 760" width="1000" height="760" font-family="Segoe UI, Arial, sans-serif">
+  <rect x="0" y="0" width="1000" height="760" fill="#ffffff"/>
+
+  <text x="500" y="24" text-anchor="middle" font-size="20" font-weight="bold">Schema elettrico raspbyCAR</text>
+
+  <!-- Legenda -->
+  <g font-size="11">
+    <rect x="40" y="34" width="14" height="14" fill="#cfe8ff" stroke="#2f6fab"/>
+    <text x="60" y="45">Raspberry Pi (logica, 3.3V)</text>
+    <rect x="230" y="34" width="14" height="14" fill="#ffe3c2" stroke="#b5651d"/>
+    <text x="250" y="45">Driver L298N</text>
+    <rect x="360" y="34" width="14" height="14" fill="#ffd6d6" stroke="#b02a2a"/>
+    <text x="380" y="45">Batteria 7V (potenza)</text>
+    <rect x="540" y="34" width="14" height="14" fill="#dcedc8" stroke="#2e7d32"/>
+    <text x="560" y="45">Motore DC</text>
+    <rect x="650" y="34" width="14" height="14" fill="#ede7f6" stroke="#6a1b9a"/>
+    <text x="670" y="45">Servo</text>
+    <rect x="740" y="34" width="14" height="14" fill="#e6e6e6" stroke="#555"/>
+    <text x="760" y="45">Partitore tensione</text>
+  </g>
+
+  <!-- Batteria + pulsante -->
+  <rect x="380" y="70" width="240" height="70" rx="8" fill="#ffd6d6" stroke="#b02a2a" stroke-width="2"/>
+  <text x="500" y="95" text-anchor="middle" font-size="14" font-weight="bold">Batteria 7V + pulsante</text>
+  <text x="500" y="112" text-anchor="middle" font-size="11">alimenta solo il L298N</text>
+  <circle cx="390" cy="140" r="4" fill="#b02a2a"/>
+  <text x="395" y="158" font-size="11">+ (attraverso pulsante)</text>
+  <circle cx="610" cy="140" r="4" fill="#333"/>
+  <text x="600" y="158" font-size="11" text-anchor="end">-</text>
+
+  <!-- Partitore di tensione -->
+  <rect x="700" y="70" width="220" height="90" rx="8" fill="#e6e6e6" stroke="#555" stroke-width="2"/>
+  <text x="810" y="92" text-anchor="middle" font-size="14" font-weight="bold">Partitore R1/R2</text>
+  <text x="810" y="110" text-anchor="middle" font-size="11">7V -&gt; meno di 3.3V</text>
+  <circle cx="700" cy="125" r="4" fill="#b02a2a"/>
+  <circle cx="920" cy="125" r="4" fill="#2f6fab"/>
+  <circle cx="810" cy="160" r="4" fill="#333"/>
+  <text x="925" y="129" font-size="11">a GPIO22</text>
+
+  <!-- L298N -->
+  <rect x="380" y="210" width="240" height="220" rx="8" fill="#ffe3c2" stroke="#b5651d" stroke-width="2"/>
+  <text x="500" y="235" text-anchor="middle" font-size="14" font-weight="bold">Driver L298N</text>
+  <circle cx="380" cy="270" r="4" fill="#2f6fab"/>
+  <text x="270" y="274" font-size="11" text-anchor="end">IN1</text>
+  <circle cx="380" cy="305" r="4" fill="#2f6fab"/>
+  <text x="270" y="309" font-size="11" text-anchor="end">IN2</text>
+  <circle cx="380" cy="340" r="4" fill="#2f6fab"/>
+  <text x="270" y="344" font-size="11" text-anchor="end">ENA (PWM)</text>
+  <circle cx="430" cy="210" r="4" fill="#b02a2a"/>
+  <text x="440" y="205" font-size="11">VCC 7V</text>
+  <circle cx="620" cy="270" r="4" fill="#2e7d32"/>
+  <text x="630" y="274" font-size="11">OUT1</text>
+  <circle cx="620" cy="305" r="4" fill="#2e7d32"/>
+  <text x="630" y="309" font-size="11">OUT2</text>
+  <circle cx="430" cy="430" r="4" fill="#333"/>
+  <text x="440" y="445" font-size="11">GND</text>
+
+  <!-- Motore DC -->
+  <rect x="700" y="230" width="220" height="90" rx="8" fill="#dcedc8" stroke="#2e7d32" stroke-width="2"/>
+  <text x="810" y="255" text-anchor="middle" font-size="14" font-weight="bold">Motore DC</text>
+  <text x="810" y="273" text-anchor="middle" font-size="11">trazione avanti/indietro</text>
+  <circle cx="700" cy="290" r="4" fill="#2e7d32"/>
+  <circle cx="700" cy="310" r="4" fill="#2e7d32"/>
+
+  <!-- Raspberry Pi -->
+  <rect x="40" y="210" width="220" height="360" rx="8" fill="#cfe8ff" stroke="#2f6fab" stroke-width="2"/>
+  <text x="150" y="235" text-anchor="middle" font-size="14" font-weight="bold">Raspberry Pi</text>
+  <text x="150" y="252" text-anchor="middle" font-size="11">USB-C dedicato, sempre acceso</text>
+  <circle cx="260" cy="270" r="4" fill="#2f6fab"/>
+  <text x="55" y="274" font-size="11">GPIO4  -&gt; IN1</text>
+  <circle cx="260" cy="305" r="4" fill="#2f6fab"/>
+  <text x="55" y="309" font-size="11">GPIO27 -&gt; IN2</text>
+  <circle cx="260" cy="340" r="4" fill="#2f6fab"/>
+  <text x="55" y="344" font-size="11">GPIO17 -&gt; ENA (PWM)</text>
+  <circle cx="260" cy="375" r="4" fill="#6a1b9a"/>
+  <text x="55" y="379" font-size="11">GPIO18 -&gt; Servo (segnale)</text>
+  <circle cx="260" cy="410" r="4" fill="#2f6fab"/>
+  <text x="55" y="414" font-size="11">GPIO22 -&gt; Power sense</text>
+  <circle cx="260" cy="445" r="4" fill="#333"/>
+  <text x="55" y="449" font-size="11">GND -&gt; massa comune</text>
+
+  <!-- Servo -->
+  <rect x="40" y="610" width="220" height="120" rx="8" fill="#ede7f6" stroke="#6a1b9a" stroke-width="2"/>
+  <text x="150" y="635" text-anchor="middle" font-size="14" font-weight="bold">Servo sterzo</text>
+  <text x="150" y="653" text-anchor="middle" font-size="11">alimentazione propria 5V</text>
+  <circle cx="260" cy="670" r="4" fill="#6a1b9a"/>
+  <text x="220" y="674" font-size="11" text-anchor="end">Segnale</text>
+  <circle cx="150" cy="730" r="4" fill="#333"/>
+  <text x="150" y="746" text-anchor="middle" font-size="11">GND</text>
+
+  <!-- Massa comune -->
+  <line x1="60" y1="748" x2="930" y2="748" stroke="#333" stroke-width="2"/>
+  <text x="500" y="742" text-anchor="middle" font-size="11" fill="#333">Massa comune (GND)</text>
+
+  <!-- Collegamenti Pi -> L298N -->
+  <line x1="260" y1="270" x2="380" y2="270" stroke="#2f6fab" stroke-width="2"/>
+  <line x1="260" y1="305" x2="380" y2="305" stroke="#2f6fab" stroke-width="2"/>
+  <line x1="260" y1="340" x2="380" y2="340" stroke="#2f6fab" stroke-width="2"/>
+
+  <!-- L298N -> Motore -->
+  <line x1="620" y1="270" x2="700" y2="290" stroke="#2e7d32" stroke-width="2"/>
+  <line x1="620" y1="305" x2="700" y2="310" stroke="#2e7d32" stroke-width="2"/>
+
+  <!-- Batteria+ -> L298N VCC -->
+  <line x1="390" y1="140" x2="430" y2="210" stroke="#b02a2a" stroke-width="2"/>
+
+  <!-- Batteria+ -> Partitore (ingresso) -->
+  <path d="M390,140 C 500,50 650,50 700,125" fill="none" stroke="#b02a2a" stroke-width="2"/>
+
+  <!-- Partitore (uscita) -> Pi GPIO22 -->
+  <path d="M920,125 C 960,125 960,410 260,410" fill="none" stroke="#2f6fab" stroke-width="2"/>
+
+  <!-- Pi GPIO18 -> Servo segnale -->
+  <path d="M260,375 C 320,375 320,670 260,670" fill="none" stroke="#6a1b9a" stroke-width="2"/>
+
+  <!-- Collegamenti a massa comune -->
+  <line x1="260" y1="445" x2="260" y2="748" stroke="#333" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <line x1="430" y1="430" x2="430" y2="748" stroke="#333" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <line x1="610" y1="140" x2="610" y2="748" stroke="#333" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <line x1="810" y1="160" x2="810" y2="748" stroke="#333" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <line x1="150" y1="730" x2="150" y2="748" stroke="#333" stroke-width="1.5" stroke-dasharray="3 3"/>
+</svg>

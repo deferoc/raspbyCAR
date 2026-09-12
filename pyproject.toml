@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "raspbycar"
+version = "0.1.0"
+description = "RC robotic car built with a Raspberry Pi and various modules"
+requires-python = ">=3.9"
+dependencies = [
+    "gpiozero>=2.0",
+    "evdev>=1.6.1; platform_system == 'Linux'",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
