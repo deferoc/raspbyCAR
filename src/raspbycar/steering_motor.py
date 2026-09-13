@@ -30,12 +30,11 @@ class SteeringMotor:
         self.center()
 
     def set_angle(self, angle: float) -> None:
-        """Muove il servo all'angolo indicato, poi lo rilascia (detach) per evitare jitter."""
+        """Muove il servo all'angolo indicato e lo mantiene attivo."""
         if angle == self._last_angle:
             return
         self._servo.angle = angle
         sleep(config.STEERING_SETTLE_TIME)
-        self._servo.detach()
         self._last_angle = angle
         self.current_angle = angle
 

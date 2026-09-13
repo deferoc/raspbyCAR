@@ -18,7 +18,7 @@ STEERING_MAX_PULSE_WIDTH = 0.0025
 STEERING_LEFT_ANGLE = -10
 STEERING_CENTER_ANGLE = 22
 STEERING_RIGHT_ANGLE = 65
-STEERING_SETTLE_TIME = 0.05  # secondi di attesa prima di rilasciare il servo (detach)
+STEERING_SETTLE_TIME = 0.12  # secondi di assestamento servo dopo il comando angolare
 
 # --- Controller Bluetooth (gamepad) ---
 # Nome (o parte del nome) del device come appare in /dev/input/ tramite evdev.
