@@ -18,7 +18,7 @@ STEERING_MAX_PULSE_WIDTH = 0.0025
 STEERING_LEFT_ANGLE = -10
 STEERING_CENTER_ANGLE = 22
 STEERING_RIGHT_ANGLE = 65
-STEERING_SETTLE_TIME = 0.12  # secondi di assestamento servo dopo il comando angolare
+STEERING_SETTLE_TIME = 0.04  # secondi di assestamento servo dopo il comando angolare
 
 # --- Controller Bluetooth (gamepad) ---
 # Nome (o parte del nome) del device come appare in /dev/input/ tramite evdev.
@@ -70,6 +70,15 @@ BT_STEER_RAW_MAX = 255
 BT_STEER_ANGLE_MIN = -10
 BT_STEER_ANGLE_MAX = 65
 BT_STEER_CENTER_RAW = 128
+
+# Soglie con isteresi per il comando discreto sinistra/centro/destra.
+BT_STEER_LEFT_ENTER_RAW = 96
+BT_STEER_LEFT_EXIT_RAW = 112
+BT_STEER_RIGHT_ENTER_RAW = 160
+BT_STEER_RIGHT_EXIT_RAW = 144
+
+# Inverte i comandi left/right se la cinematica dello sterzo è montata al contrario.
+STEERING_INVERT_DIRECTION = True
 
 # --- Sensore alimentazione L298N ---
 # Pin collegato, tramite un partitore di tensione (es. 10k+10k) o un

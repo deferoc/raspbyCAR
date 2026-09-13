@@ -13,13 +13,15 @@ class Car:
         self._controller = BluetoothController()
         self._motor = DCMotor()
         self._steering = SteeringMotor()
+        self._steer_mode = "center"
 
     def _format_debug_report(self, state: ControllerState) -> str:
         """Crea un log leggibile da CLI con i valori attuali del controller e dell'impianto."""
         return (
             "[DEBUG] L2={:3d} R2={:3d} axis_x={:3d} "
             "dir={:7s} speed={:.2f} motor={:.2f}V "
-            "steer_angle={:.0f}° servo={:.0f}°"
+            "steer_angle={:.0f}° servo={:.0f}° "
+            "mode={:6s} invert={}"
         ).format(
             state.backward_trigger,
             state.forward_trigger,
@@ -29,6 +31,8 @@ class Car:
             self._motor.command_voltage,
             state.steer,
             self._steering.current_angle,
+            self._steer_mode,
+            config.STEERING_INVERT_DIRECTION,
         )
 
     def _apply_state(self, state: ControllerState) -> None:
@@ -39,10 +43,29 @@ class Car:
         else:
             self._motor.stop()
 
-        if state.steer == config.STEERING_LEFT_ANGLE:
-            self._steering.left()
-        elif state.steer == config.STEERING_RIGHT_ANGLE:
-            self._steering.right()
+        axis = state.steer_axis
+        if self._steer_mode == "left":
+            if axis >= config.BT_STEER_LEFT_EXIT_RAW:
+                self._steer_mode = "center"
+        elif self._steer_mode == "right":
+            if axis <= config.BT_STEER_RIGHT_EXIT_RAW:
+                self._steer_mode = "center"
+        else:
+            if axis <= config.BT_STEER_LEFT_ENTER_RAW:
+                self._steer_mode = "left"
+            elif axis >= config.BT_STEER_RIGHT_ENTER_RAW:
+                self._steer_mode = "right"
+
+        if self._steer_mode == "left":
+            if config.STEERING_INVERT_DIRECTION:
+                self._steering.right()
+            else:
+                self._steering.left()
+        elif self._steer_mode == "right":
+            if config.STEERING_INVERT_DIRECTION:
+                self._steering.left()
+            else:
+                self._steering.right()
         else:
             self._steering.center()
 
