@@ -41,12 +41,16 @@ class BluetoothController:
 
         self._backward_value = 0
         self._forward_value = 0
+        self._filtered_steer_axis = config.BT_STEER_CENTER_RAW
 
     def _set_raw_state(self, event_code: int, value: int) -> None:
         """Aggiorna i valori grezzi del joypad usati per il debug."""
         if event_code == config.BT_STEER_AXIS:
-            self.state.steer_axis = value
-            self.state.steer = self._discrete_steer_angle(value)
+            if abs(value - self._filtered_steer_axis) > config.BT_STEER_DEADZONE_RAW:
+                self._filtered_steer_axis = value
+
+            self.state.steer_axis = self._filtered_steer_axis
+            self.state.steer = self._discrete_steer_angle(self._filtered_steer_axis)
         elif event_code == config.BT_BACKWARD_TRIGGER:
             self.state.backward_trigger = value
             self._backward_value = value

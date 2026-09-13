@@ -73,6 +73,7 @@ BT_STEER_RAW_MAX = 255
 BT_STEER_ANGLE_MIN = -10
 BT_STEER_ANGLE_MAX = 65
 BT_STEER_CENTER_RAW = 128
+BT_STEER_DEADZONE_RAW = 2  # ignora micro-oscillazioni dell'asse X (+/- raw)
 
 # Soglie con isteresi per il comando discreto sinistra/centro/destra.
 BT_STEER_LEFT_ENTER_RAW = 96
