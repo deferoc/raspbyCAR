@@ -48,6 +48,12 @@ BT_FORWARD_TRIGGER = 5
 DC_MOTOR_SUPPLY_VOLTAGE = 7.0
 DC_MOTOR_MIN_START_VOLTAGE = 1.2
 
+# Re-arm periodico del bridge: aiuta a uscire da rari stati di blocco
+# senza riavviare il processo Python.
+DC_MOTOR_REARM_INTERVAL = 0.8
+DC_MOTOR_REARM_PULSE = 0.03
+DC_MOTOR_REARM_EPSILON = 0.01
+
 # Raw del trigger da cui inizia la curva di accelerazione.
 # 1 -> 1.2V ; 255 -> 7.0V
 BT_TRIGGER_START_RAW = 1
