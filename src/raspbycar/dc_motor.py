@@ -16,7 +16,15 @@ class DCMotor:
         backward_pin: int = config.DC_MOTOR_BACKWARD_PIN,
         enable_pin: int = config.DC_MOTOR_ENABLE_PIN,
     ) -> None:
-        self._motor = Motor(forward=forward_pin, backward=backward_pin, enable=enable_pin)
+        try:
+            self._motor = Motor(forward=forward_pin, backward=backward_pin, enable=enable_pin)
+        except Exception as exc:
+            raise RuntimeError(
+                "Impossibile inizializzare il motore DC sui pin "
+                f"FWD={forward_pin}, BWD={backward_pin}, EN={enable_pin}. "
+                "Possibili cause: servizio raspbycar gia' attivo in background, "
+                "altro processo che usa i GPIO, oppure 1-Wire (w1-gpio) su GPIO4."
+            ) from exc
         self.current_speed = 0.0
         self.command_voltage = 0.0
         self._last_direction = "stop"
