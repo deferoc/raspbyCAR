@@ -85,11 +85,5 @@ BT_STEER_RIGHT_EXIT_RAW = 144
 # Inverte i comandi left/right se la cinematica dello sterzo è montata al contrario.
 STEERING_INVERT_DIRECTION = True
 
-# --- Sensore alimentazione L298N ---
-# Pin collegato, tramite un partitore di tensione (es. 10k+10k) o un
-# optoisolatore, alla linea a 7V del L298N. NON collegare i 7V direttamente
-# al GPIO (max 3.3V): si danneggerebbe il Raspberry Pi.
-L298N_POWER_SENSE_PIN = 22
-POWER_MONITOR_LOG_INTERVAL = 1.0  # secondi minimi tra due warning consecutivi di power assente
 
 

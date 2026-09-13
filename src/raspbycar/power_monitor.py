@@ -17,7 +17,12 @@ class PowerMonitor:
     """Sente se il L298N è alimentato (batteria collegata / pulsante premuto)."""
 
     def __init__(self, pin: int = config.L298N_POWER_SENSE_PIN) -> None:
-        self._sense = DigitalInputDevice(pin, bounce_time=0.1)
+        self._sense = DigitalInputDevice(
+            pin,
+            pull_up=False,
+            active_state=config.L298N_POWER_SENSE_ACTIVE_HIGH,
+            bounce_time=0.1,
+        )
 
     @property
     def is_powered(self) -> bool:
