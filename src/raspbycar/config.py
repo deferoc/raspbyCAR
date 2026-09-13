@@ -12,13 +12,16 @@ DC_MOTOR_DEFAULT_SPEED = 0.5  # 0.0 - 1.0, usata se il gamepad non è collegato
 STEERING_SERVO_PIN = 18
 STEERING_MIN_ANGLE = -90
 STEERING_MAX_ANGLE = 90
-STEERING_MIN_PULSE_WIDTH = 0.0009
-STEERING_MAX_PULSE_WIDTH = 0.0021
+STEERING_MIN_PULSE_WIDTH = 0.0005
+STEERING_MAX_PULSE_WIDTH = 0.0025
 
 STEERING_LEFT_ANGLE = -10
 STEERING_CENTER_ANGLE = 22
 STEERING_RIGHT_ANGLE = 65
-STEERING_SETTLE_TIME = 0.08  # secondi di assestamento servo dopo il comando angolare
+STEERING_SETTLE_TIME = 0.12  # minimo assestamento servo dopo il comando angolare
+STEERING_SECONDS_PER_60_DEG = 0.12  # velocita' tipica servo (s/60°), usata per stimare la corsa
+STEERING_EXTRA_SETTLE_TIME = 0.04  # margine extra per compensare attriti/carico meccanico
+STEERING_DETACH_AFTER_MOVE = False  # False: mantiene coppia sullo sterzo, True: riduce jitter/consumi
 
 # --- Controller Bluetooth (gamepad) ---
 # Nome (o parte del nome) del device come appare in /dev/input/ tramite evdev.
