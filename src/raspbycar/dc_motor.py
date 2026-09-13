@@ -34,7 +34,7 @@ class DCMotor:
     def _set_speed(self, direction: str, speed: float) -> None:
         """Aggiorna velocità e tensione equivalente applicata al motore."""
         now = monotonic()
-        self.current_speed = max(0.0, min(1.0, speed))
+        self.current_speed = max(0.0, min(config.DC_MOTOR_MAX_SPEED, speed))
         self.command_voltage = self.current_speed * 7.0
 
         # Se il comando attivo resta uguale per molto tempo, invia un breve

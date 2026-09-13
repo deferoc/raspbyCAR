@@ -7,6 +7,7 @@ DC_MOTOR_BACKWARD_PIN = 27  # IN2
 DC_MOTOR_ENABLE_PIN = 17    # PWM per la velocità
 
 DC_MOTOR_DEFAULT_SPEED = 0.5  # 0.0 - 1.0, usata se il gamepad non è collegato
+DC_MOTOR_MAX_SPEED = 0.85  # limite globale di trazione (85%)
 
 # --- Servo di sterzo (destra/centro/sinistra) ---
 STEERING_SERVO_PIN = 18
